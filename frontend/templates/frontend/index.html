@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load static from staticfiles %}
+
+{% block title %}Django REST ExtJS{% endblock %}
+
+
+{% block head %}
+<script type='text/javascript' src='{% static "frontend/app.js" %}'></script>
+{% endblock %}
+
+
+{% block content %}
+<body>
+Double click row to edit<br>
+Right click row to delete or insert new
+</body>
+{% endblock %}
