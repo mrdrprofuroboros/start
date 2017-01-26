@@ -36,7 +36,7 @@ class TableRowSerializer(serializers.HyperlinkedModelSerializer):
 
     def update(self, instance, validated_data):
         """
-        Update and return an existing TableROw instance, given the validated data.
+        Update and return an existing TableRow instance, given the validated data.
         """
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)

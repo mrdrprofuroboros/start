@@ -40,27 +40,59 @@ def data(request, id=None):
     if request.method == 'GET':
         rows = TableRow.objects.all()
         serializer = TableRowSerializer(rows, many=True)
-        return JSONResponse(serializer.data)
+        response = {
+            "total" : len(serializer.data),
+            "success" : True,
+            "message": '',
+            "data" : serializer.data,
+        } 
+        return JSONResponse(response)
 
     elif request.method == 'POST':
         body = urllib.unquote(request.body)
-        data = json.loads(body.split('=')[1])
+        data = json.loads(body)['data']
+        print data
         serializer = TableRowSerializer(data=data)
+        response = {
+            "total" : 0,
+            "success" : False,
+            "message" : '',
+        }
         if serializer.is_valid():
             serializer.save()
-            return JSONResponse(serializer.data, status=201)
-        return JSONResponse(serializer.errors, status=400)
+            response['total'] = len(serializer.data),
+            response['data'] = serializer.data
+            response['success'] = True
+            return JSONResponse(response, status=201)
+        response['data'] = serializer.errors
+        return JSONResponse(response, status=400)
 
     elif request.method == 'PUT':
         body = urllib.unquote(request.body)
-        data = json.loads(body.split('=')[1])
-        serializer = TableRowSerializer(TableRow.objects.get(id=id), data=data)
+        data = json.loads(body)['data']
+        print data
+        serializer = TableRowSerializer(TableRow.objects.get(id=id), data=data, partial=True)
+        response = {
+            "total" : 0,
+            "success" : False,
+            "message" : '',
+        }
         if serializer.is_valid():
             serializer.save()
-            return JSONResponse(serializer.data)
-        return JSONResponse(serializer.errors, status=400)
+            response['total'] = len(serializer.data),
+            response['data'] = serializer.data
+            response['success'] = True
+            return JSONResponse(response)
+
+        response['data'] = serializer.errors
+        return JSONResponse(response, status=400)
 
     elif request.method == 'DELETE':
         row = TableRow.objects.get(id=id)
         row.delete()
-        return HttpResponse(status=204)
+        response = {
+            "success" : True,
+            "message": '',
+            "data": []
+        } 
+        return JSONResponse(response, status=204)
